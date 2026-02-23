@@ -11,20 +11,27 @@ export default function EditProject() {
   const [images, setImages] = useState([]);
   const [oldImages, setOldImages] = useState([]);
 
+  // Build proper image URL (Cloudinary or local)
+  const buildImageUrl = (img) => {
+    if (!img) return "";
+    if (img.startsWith("http://") || img.startsWith("https://")) return img;
+    return `${API_URL.replace("/api", "")}/uploads/${img.replace(/^\/+/, "")}`;
+  };
+
   useEffect(() => {
     fetch(`${API_URL}/projects/all`)
-      .then(res => res.json())
-      .then(data => {
-        const project = data.projects.find(p => p._id === id);
+      .then((res) => res.json())
+      .then((data) => {
+        const project = data.projects.find((p) => p._id === id);
         if (project) {
           setForm({
             title: project.title,
             description: project.description,
           });
-          setOldImages(project.images);
+          setOldImages(project.images || []);
         }
       });
-  }, []);
+  }, [id]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -41,6 +48,7 @@ export default function EditProject() {
 
     const data = await res.json();
     if (data.success) navigate("/admin/projects");
+    else alert("Update failed. Check console for errors.");
   };
 
   return (
@@ -54,6 +62,7 @@ export default function EditProject() {
             className="border p-3 w-full rounded"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
+            placeholder="Project Title"
             required
           />
 
@@ -61,19 +70,31 @@ export default function EditProject() {
             rows="4"
             className="border p-3 w-full rounded"
             value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, description: e.target.value })
+            }
+            placeholder="Project Description"
             required
           />
 
           {/* Old Images */}
-          <div className="flex gap-2">
-            {oldImages.map((img, i) => (
-              <img
-                key={i}
-                src={`${API_URL.replace("/api","")}/uploads/${img}`}
-                className="w-24 h-16 object-cover rounded"
-              />
-            ))}
+          <div className="flex gap-2 flex-wrap">
+            {oldImages.length > 0 ? (
+              oldImages.map((img, i) => (
+                <img
+                  key={i}
+                  src={buildImageUrl(img)}
+                  alt={`Old ${i}`}
+                  className="w-24 h-16 object-cover rounded shadow"
+                  onError={(e) =>
+                    (e.currentTarget.src =
+                      "https://placehold.co/80x50?text=Not+Found")
+                  }
+                />
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">No old images</p>
+            )}
           </div>
 
           {/* New Images */}
@@ -88,7 +109,7 @@ export default function EditProject() {
             Upload new images to replace old ones
           </p>
 
-          <button className="bg-green-600 text-white w-full py-3 rounded-lg">
+          <button className="bg-green-600 text-white w-full py-3 rounded-lg hover:bg-green-700 transition">
             Update Project
           </button>
         </form>

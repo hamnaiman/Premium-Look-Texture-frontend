@@ -11,21 +11,32 @@ export default function EditAbout() {
     title: "",
     subtitle: "",
     description: "",
-    image: "", // old image (URL)
+    image: "", // old image
   });
 
   const [newImage, setNewImage] = useState(null);
 
+  // Helper to build proper image URL
+  const buildImageUrl = (img) => {
+    if (!img) return "";
+    if (img.startsWith("http://") || img.startsWith("https://")) return img;
+    return `${API_URL.replace("/api", "")}/uploads/${img.replace(/^\/+/, "")}`;
+  };
+
   const load = async () => {
-    const res = await fetch(`${API_URL}/about/all`);
-    const data = await res.json();
-    const item = data.about.find((x) => x._id === id);
-    if (item) setForm(item);
+    try {
+      const res = await fetch(`${API_URL}/about/all`);
+      const data = await res.json();
+      const item = data.about.find((x) => x._id === id);
+      if (item) setForm(item);
+    } catch (err) {
+      console.error("Error loading About:", err);
+    }
   };
 
   useEffect(() => {
     load();
-  }, []);
+  }, [id]);
 
   const handle = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -38,20 +49,23 @@ export default function EditAbout() {
     fd.append("subtitle", form.subtitle);
     fd.append("description", form.description);
 
-    // If new image chosen → upload it
-    if (newImage) {
-      fd.append("image", newImage);
-    }
+    if (newImage) fd.append("image", newImage);
 
-    const res = await fetch(`${API_URL}/about/update/${id}`, {
-      method: "PUT",
-      body: fd,
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      alert("Updated Successfully");
-      navigate("/admin/about");
+    try {
+      const res = await fetch(`${API_URL}/about/update/${id}`, {
+        method: "PUT",
+        body: fd,
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Updated Successfully");
+        navigate("/admin/about");
+      } else {
+        alert("Update failed. Check console.");
+      }
+    } catch (err) {
+      console.error("Update error:", err);
+      alert("Update failed. Check console.");
     }
   };
 
@@ -59,9 +73,7 @@ export default function EditAbout() {
     <AdminLayout>
       <div className="p-6 bg-white rounded-xl border shadow max-w-2xl mx-auto">
 
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">
-          Edit About
-        </h1>
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Edit About</h1>
 
         <form className="space-y-5" onSubmit={update}>
 
@@ -101,14 +113,18 @@ export default function EditAbout() {
             ></textarea>
           </div>
 
-          {/* Current Image Preview */}
+          {/* Current Image */}
           <div>
             <label className="block font-medium mb-1">Current Image</label>
             {form.image ? (
               <img
-                src={`${API_URL}${form.image}`}
+                src={buildImageUrl(form.image)}
                 alt="Current"
                 className="w-32 h-32 object-cover rounded border mb-2"
+                onError={(e) =>
+                  (e.currentTarget.src =
+                    "https://placehold.co/80x80?text=Not+Found")
+                }
               />
             ) : (
               <p>No image uploaded</p>

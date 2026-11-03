@@ -66,12 +66,12 @@ export default function App() {
               <Navbar />
 
               <section id="home"><Hero /></section>
+              <section id="gallery"><Gallery /></section>
+              <section id="projects"><Projects /></section>
               <section id="about"><About /></section>
               <section id="collection"><Collection /></section>
               <section id="whychooseus"><WhyChooseUs /></section>
-              <section id="gallery"><Gallery /></section>
               <section id="services"><Services /></section>
-              <section id="projects"><Projects/></section>
               <section id="testimonials"><Testimonials /></section>
               <section id="contact"><ContactForm /></section>
 

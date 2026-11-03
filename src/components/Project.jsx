@@ -177,11 +177,9 @@ export default function Projects() {
         {/* Heading */}
         <div className="text-center mb-8 sm:mb-10">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-800 leading-tight">
-            Crafting <span className="text-yellow-500">Premium</span>{" "}
-            <span className="text-black">Texture</span> <br />
-            <span className="text-red-500">Paint</span>{" "}
-            <span className="text-blue-500">Experiences</span>
+            Our <span className="text-red-500">Work</span>
           </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-600 sm:text-base">A look at the real texture and paint projects completed by our team.</p>
         </div>
 
         {/* Projects Grid */}

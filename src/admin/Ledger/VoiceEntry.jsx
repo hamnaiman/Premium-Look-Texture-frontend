@@ -20,9 +20,19 @@ export default function VoiceEntry({lang,names,api,onSaved,onError,onNotice,priv
   if(!Speech){onError(t.unsupported);return;}
   if(drafts.length&&!window.confirm(t.replace))return;
   onError('');onNotice('');setMessage('');setDrafts([]);setSavedRows([]);setText('');transcript.current='';
-  const rec=new Speech();recognition.current=rec;rec.lang=voiceLang;rec.continuous=true;rec.interimResults=true;
+  const rec=new Speech();recognition.current=rec;rec.lang=voiceLang;rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=5;
   rec.onresult=event=>{
-   let final='',interim='';for(let i=0;i<event.results.length;i++){if(event.results[i].isFinal)final+=event.results[i][0].transcript+' ';else interim+=event.results[i][0].transcript+' ';}
+   let final='',interim='';
+   const quality=alternative=>{
+    const rows=parseExpenses(alternative.transcript,currentNames.current);
+    return rows.length*4+rows.filter(row=>row.site).length*3+rows.filter(row=>row.category!=='other').length*2+rows.filter(row=>row.category!=='labour'||row.labour).length*2+(alternative.confidence||0);
+   };
+   for(let i=0;i<event.results.length;i++){
+    const result=event.results[i],alternatives=[...result];
+    const best=alternatives.sort((a,b)=>quality(b)-quality(a))[0];
+    if(result.isFinal)final+=(best?.transcript||'')+' ';
+    else interim+=(alternatives.sort((a,b)=>(b.confidence||0)-(a.confidence||0))[0]?.transcript||'')+' ';
+   }
    transcript.current=final.trim();setText((final+interim).trim());
   };
   rec.onerror=event=>{if(event.error!=='aborted')onError(t.error);};

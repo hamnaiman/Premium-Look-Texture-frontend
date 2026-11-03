@@ -125,6 +125,15 @@
 .ledger-spoken-text p{overflow-wrap:anywhere;line-height:2}
 .ledger-spoken-results{margin-top:24px;padding-top:20px;border-top:1px solid #c5dacc}
 .ledger-spoken-row{background:white;border:1px solid #d6e3db;border-radius:12px;padding:16px;margin-bottom:14px}
+.ledger-name-input{display:flex;align-items:stretch;gap:8px;min-width:0}
+.ledger-name-input input{flex:1;min-width:0}
+.ledger-name-mic{display:flex;align-items:center;justify-content:center;gap:7px;flex:0 0 auto;padding:8px 14px;border:1px solid #b8cbc1;border-radius:10px;background:#f1f7f4;color:#185d49;font-size:16px;font-weight:700}
+.ledger-name-mic.is-listening{background:#fff0ef;color:#a12e2e}
+.ledger-name-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ledger-name-row>strong{font-size:19px;overflow-wrap:anywhere}
+.ledger-name-edit{flex:0 0 auto;border:1px solid #d6e3db;border-radius:8px;text-decoration:none;padding:4px 10px}
+.ledger-voice-name form{max-width:600px}
+@media screen and (max-width:600px){.ledger-name-mic{padding:8px 10px}.ledger-name-mic span{font-size:15px}.ledger-name-row>strong{font-size:18px}}
 .ledger-spoken-row .ledger-urdu-summary{background:transparent;padding:0;margin:0 0 10px;font-size:24px}
 .ledger-saved-badge{color:#18634e;background:#e4f3e9;border-radius:8px;padding:3px 12px;display:inline-block}
 .ledger-pending-badge{font-size:16px;color:#64756a}.ledger-spoken-results>.ledger-save-all{min-width:180px;margin-top:8px}

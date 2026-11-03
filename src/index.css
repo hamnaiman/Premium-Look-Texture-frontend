@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 summary::-webkit-details-marker { display: none; }
-details[open] .gallery-expand-icon { transform: rotate(45deg); }
+details[open] .details-toggle { transform: rotate(45deg); }
 

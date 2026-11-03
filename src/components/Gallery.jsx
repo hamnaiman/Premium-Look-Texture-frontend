@@ -1,23 +1,36 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 
 export default function Gallery() {
-  const API_URL = import.meta.env.VITE_API_URL || "/api";
-  const [items,setItems]=useState([]),[loading,setLoading]=useState(true);
-  const navigate=useNavigate();
-  useEffect(()=>{let active=true;fetch(`${API_URL}/gallery`).then(response=>response.json()).then(data=>{if(active&&data.success)setItems(data.colors||[]);}).catch(()=>{}).finally(()=>{if(active)setLoading(false);});return()=>{active=false};},[API_URL]);
-  const textures=items.filter(item=>item.type==='texture'||Boolean(item.image));
-  const colors=items.filter(item=>!item.image&&item.type!=='texture');
-  const preview=(params)=>{const query=new URLSearchParams(params);navigate(`/room-preview?${query.toString()}`);};
-  return <section className="relative overflow-hidden bg-[#101b1a] py-20 text-[#f7f3eb] sm:py-28">
-    <div className="pointer-events-none absolute -right-40 top-0 h-96 w-96 rounded-full bg-amber-200/10 blur-3xl" />
-    <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <header className="mx-auto mb-12 max-w-3xl text-center sm:mb-16"><p className="text-xs font-semibold uppercase tracking-[.28em] text-[#d0ae77]">THE FINISH LIBRARY</p><h2 className="mt-4 font-serif text-4xl font-medium leading-tight sm:text-5xl">Textures that change<br className="hidden sm:block"/> the feeling of a room</h2><p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/65 sm:text-lg">Explore hand-selected wall finishes. Choose a texture to see it on a room wall.</p><div className="mx-auto mt-7 h-px w-20 bg-[#c9a66a]" /></header>
-      {loading?<p className="py-12 text-center text-white/65">Loading wall finishes…</p>:textures.length===0?<div className="rounded-2xl border border-white/15 bg-white/5 p-8 text-center text-white/70">New textures are being prepared. Please check back soon.</div>:<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{textures.map((item,index)=><motion.article key={item._id} initial={{opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.15}} transition={{duration:.4,delay:Math.min(index*.06,.24)}} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/[.045] shadow-[0_18px_60px_rgba(0,0,0,.24)]"><button type="button" onClick={()=>preview({texture:item.image,name:item.name})} className="relative block aspect-[4/3] w-full overflow-hidden text-left"><img src={item.image} alt={`${item.name} wall texture`} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"/><span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent"/><span className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3"><span><span className="block text-xs uppercase tracking-[.2em] text-[#e0c38f]">WALL FINISH</span><span className="mt-1 block font-serif text-2xl text-white">{item.name}</span></span><span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/50 bg-white/10 text-xl text-white backdrop-blur transition group-hover:bg-[#c9a66a]">↗</span></span></button><div className="flex items-center justify-between px-5 py-4"><p className="text-sm text-white/60">See this finish in a room</p><button type="button" onClick={()=>preview({texture:item.image,name:item.name})} className="text-sm font-semibold text-[#e0c38f] underline-offset-4 hover:underline">Preview on wall</button></div></motion.article>)}</div>}
-      <details className="mt-10 overflow-hidden rounded-2xl border border-white/15 bg-white/[.045] open:bg-white/[.07]">
-        <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:px-7"><span><span className="block font-serif text-xl sm:text-2xl">Looking for a paint colour?</span><span className="mt-1 block text-sm text-white/60">Open the colour library to browse solid shades.</span></span><span className="gallery-expand-icon grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/20 text-xl text-[#e0c38f] transition-transform">+</span></summary>
-        <div className="border-t border-white/10 px-5 py-6 sm:px-7">{colors.length?<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">{colors.map(color=><button type="button" key={color._id} onClick={()=>preview({color:(color.hex||'').replace('#',''),name:color.name})} className="group overflow-hidden rounded-xl border border-white/10 bg-black/20 text-left transition hover:-translate-y-0.5 hover:border-[#c9a66a]/70"><span className="block h-20 w-full sm:h-24" style={{backgroundColor:color.hex}}/><span className="block px-3 py-3"><span className="block truncate font-medium text-white">{color.name}</span><span className="mt-1 block font-mono text-xs uppercase text-white/45">{color.hex}</span></span></button>)}</div>:<p className="py-4 text-white/60">No paint colours have been added yet.</p>}</div>
+  const API_URL = import.meta.env.VITE_API_URL;
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    fetch(`${API_URL}/gallery`).then(response => response.json()).then(data => {
+      if (active && data.success && Array.isArray(data.colors)) setItems(data.colors);
+    }).catch(error => console.error("Fetch error:", error)).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [API_URL]);
+
+  const openPreview = params => {
+    const query = new URLSearchParams(params);
+    window.open(`/room-preview?${query.toString()}`, "_blank", "noopener,noreferrer");
+  };
+  const textures = items.filter(item => item.type === "texture" || Boolean(item.image));
+  const colors = items.filter(item => !item.image && item.type !== "texture");
+
+  return <section className="bg-gray-50 py-10 sm:py-14">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 className="mb-8 text-center text-2xl font-extrabold leading-tight text-gray-800 sm:mb-12 sm:text-3xl md:text-4xl">
+        <span className="text-black">Explore Our</span>{" "}<span className="text-yellow-500">Premium</span><br/>
+        <span className="text-red-500">Textures</span>{" "}<span className="text-black">&</span>{" "}<span className="text-blue-500">Colours</span>
+      </h2>
+      {loading?<p className="py-8 text-center text-gray-600">Loading gallery…</p>:textures.length>0&&<div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">{textures.map(item=><article key={item._id} className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md transition hover:-translate-y-1 hover:shadow-xl"><button type="button" onClick={()=>openPreview({texture:item.image,name:item.name})} className="relative block aspect-[4/3] w-full overflow-hidden text-left"><img src={item.image} alt={`${item.name} texture`} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105"/><span className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-gradient-to-t from-black/80 to-transparent px-4 pb-4 pt-12 text-white"><span className="text-lg font-bold">{item.name}</span><span className="rounded-full bg-yellow-500 px-3 py-2 text-sm font-semibold text-black">View on wall ↗</span></span></button></article>)}</div>}
+      {!loading&&!textures.length&&<p className="mb-5 text-center text-gray-600">No textures have been added yet.</p>}
+      <details className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-gray-800 sm:px-6"><span><span className="block text-lg font-bold sm:text-xl">Explore paint colours</span><span className="mt-1 block text-sm text-gray-500">Click to view colour shades on the room wall.</span></span><span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gray-100 text-2xl text-blue-600 transition-transform details-toggle">+</span></summary>
+        <div className="border-t border-gray-100 p-5 sm:p-6">{loading?<p className="py-4 text-center text-gray-600">Loading colours…</p>:colors.length===0?<p className="py-4 text-center text-gray-600">No colours have been added.</p>:<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 sm:gap-6">{colors.map(color=><button type="button" key={color._id} onClick={()=>openPreview({color:(color.hex||"").replace("#",""),name:color.name})} className="group text-center transition-transform hover:-translate-y-1"><span className="relative block h-24 w-full overflow-hidden rounded-xl border border-gray-200 shadow-md sm:h-28 md:h-32" style={{backgroundColor:color.hex}}><span className="absolute inset-0 bg-black/10 opacity-0 transition group-hover:opacity-25"/></span><span className="mt-2 block truncate text-sm font-semibold text-gray-800 sm:text-base">{color.name}</span><span className="block text-xs uppercase text-gray-500 sm:text-sm">{color.hex}</span></button>)}</div>}</div>
       </details>
     </div>
   </section>;

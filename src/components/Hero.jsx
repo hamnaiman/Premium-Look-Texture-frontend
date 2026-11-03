@@ -17,11 +17,18 @@ export default function Hero() {
 
   if (!hero) return null;
 
+  const storedImage = String(hero.bgImage || "");
+  const backendUrl = (API_URL || "").replace(/\/api\/?$/, "").replace(/\/+$/, "");
+  const imagePath = storedImage.replace(/^\/+/, "");
+  const imageSrc = /^https?:\/\//i.test(storedImage)
+    ? storedImage
+    : `${backendUrl}/${imagePath.startsWith("uploads/") ? imagePath : `uploads/${imagePath}`}`;
+
   return (
     <section className="relative w-full h-screen overflow-hidden">
       {/* Background Image */}
       <img
-        src={`${API_URL.replace("/api", "")}/uploads/${hero.bgImage}`}
+        src={imageSrc}
         alt="Hero Background"
         className="absolute inset-0 w-full h-full object-cover object-center"
       />

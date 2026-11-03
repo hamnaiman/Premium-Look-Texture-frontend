@@ -58,12 +58,6 @@
 .ledger-empty{text-align:center;padding:40px 16px;color:#52695f}
 @media screen and (max-width:1100px){.ledger-grid{gap:16px}.ledger-card{padding:20px}.ledger-filters .ledger-field{flex-basis:calc(50% - 16px)}}
 @media screen and (max-width:900px){
- .ledger-layout{flex-direction:column}
- .ledger-layout aside{position:relative;width:100%;height:auto;padding:12px 16px;flex-shrink:0}
- .ledger-layout aside h2{font-size:18px;margin-bottom:10px}
- .ledger-layout aside nav{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px}
- .ledger-layout aside nav a{white-space:nowrap;flex-shrink:0;font-size:13px;min-height:44px}
- .ledger-layout aside nav button{margin-top:0;white-space:nowrap;flex-shrink:0;min-height:44px}
  .ledger-layout>div{margin-left:0;width:100%}
  .ledger-layout>div>main{padding:20px}
  .ledger-heading{align-items:start}.ledger-grid{gap:16px}

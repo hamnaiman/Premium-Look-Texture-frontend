@@ -11,11 +11,14 @@ export default function About() {
   // Normalize image path
   const buildImageUrl = (image) => {
     if (!image) return "";
+    // About uploads are stored as full Cloudinary URLs. Keep remote URLs intact.
+    if (/^https?:\/\//i.test(image)) return image;
     let cleanImage = image.replace(/^\/+/, "");
     if (cleanImage.startsWith("uploads/")) {
       cleanImage = cleanImage.replace("uploads/", "");
     }
-    return `${BASE_URL}/uploads/${cleanImage}`;
+    const baseUrl = (BASE_URL || API_URL?.replace(/\/api\/?$/, "") || "").replace(/\/+$/, "");
+    return `${baseUrl}/uploads/${cleanImage}`;
   };
 
   const loadAbout = async () => {

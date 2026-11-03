@@ -150,15 +150,14 @@ export default function About() {
   }, []);
 
   return (
-    <section id="about" className="w-full bg-gray-50 py-10 md:py-10">
+    <section id="about" className="w-full bg-[#f4f0e8] py-20 md:py-28">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Heading */}
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900">
-            <span className="text-yellow-500">About</span> <br />
-            <span className="text-red-500">Premium</span>{" "}
-            <span className="text-black">Look Texture</span>
+        <div className="text-center mb-10 md:mb-14">
+          <p className="text-xs font-semibold uppercase tracking-[.25em] text-[#947448]">OUR STUDIO</p>
+          <h2 className="mt-3 font-serif text-4xl font-medium text-[#172421] sm:text-5xl">
+            About Premium Look Texture
           </h2>
         </div>
 
@@ -170,7 +169,7 @@ export default function About() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="w-full lg:w-5/12 h-64 sm:h-80 md:h-96 lg:h-[400px]"
+            className="w-full lg:w-5/12 h-64 sm:h-80 md:h-96 lg:h-[440px]"
           >
             <img
               src={
@@ -183,7 +182,7 @@ export default function About() {
                 e.currentTarget.src =
                   "https://placehold.co/800x600?text=Image+Not+Found";
               }}
-              className="w-full h-full object-cover rounded-2xl shadow-xl"
+              className="w-full h-full object-cover rounded-2xl shadow-[0_24px_70px_rgba(23,36,33,.16)]"
             />
           </motion.div>
 
@@ -193,19 +192,19 @@ export default function About() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="w-full lg:w-7/12 bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border-t-4 border-yellow-500 flex flex-col justify-center h-auto lg:h-[400px]"
+            className="w-full lg:w-7/12 bg-white rounded-2xl border border-[#e5dfd3] p-6 sm:p-8 md:p-10 flex flex-col justify-center h-auto lg:h-[440px]"
           >
             {about ? (
               <>
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 text-gray-900">
+                <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl font-medium mb-3 text-[#172421]">
                   {about.title}
                 </h3>
 
-                <h4 className="text-sm sm:text-base font-semibold text-gray-600 mb-3">
+                <h4 className="text-sm sm:text-base font-semibold text-[#947448] mb-4">
                   {about.subtitle}
                 </h4>
 
-                <p className="text-sm sm:text-base leading-relaxed text-gray-700 whitespace-pre-line">
+                <p className="text-sm sm:text-base leading-8 text-[#626c66] whitespace-pre-line">
                   {about.description}
                 </p>
               </>

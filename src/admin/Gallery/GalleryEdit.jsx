@@ -24,7 +24,7 @@ export default function GalleryEdit() {
 
     const res = await fetch(`${API_URL}/gallery/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
       body: JSON.stringify({ name, hex }),
     });
 

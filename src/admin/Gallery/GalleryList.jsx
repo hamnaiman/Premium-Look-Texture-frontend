@@ -1,107 +1,16 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../AdminLayout";
 
 export default function GalleryList() {
   const API_URL = import.meta.env.VITE_API_URL;
-  const [colors, setColors] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchColors = async () => {
-    try {
-      const res = await fetch(`${API_URL}/gallery`);
-      const data = await res.json();
-      if (data.success) setColors(data.colors);
-    } catch (err) {
-      console.error(err);
-    }
-    setLoading(false);
-  };
-
-  const deleteColor = async (id) => {
-    if (!confirm("Delete this color?")) return;
-
-    await fetch(`${API_URL}/gallery/${id}`, {
-      method: "DELETE",
-    });
-
-    fetchColors();
-  };
-
-  useEffect(() => {
-    fetchColors();
-  }, []);
-
-  return (
-    <AdminLayout>
-      <div className="p-6">
-
-        <div className="p-6 bg-gray-100 rounded-xl mb-8 border shadow-sm">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-black">Gallery Colors</h1>
-              <p className="text-gray-800 mt-2">Manage all gallery colors.</p>
-            </div>
-
-            <Link
-              to="/admin/gallery/add"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition"
-            >
-              + Add Color
-            </Link>
-          </div>
-        </div>
-
-        <div className="bg-white shadow-md rounded-xl overflow-hidden border">
-          {loading ? (
-            <div className="p-6 text-gray-600">Loading...</div>
-          ) : colors.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">No colors found.</div>
-          ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-100 border-b">
-                  <th className="p-3 text-left">Color Name</th>
-                  <th className="p-3 text-left">Hex Code</th>
-                  <th className="p-3 text-left">Preview</th>
-                  <th className="p-3 text-left">Actions</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {colors.map((c) => (
-                  <tr key={c._id} className="border-b hover:bg-gray-50 transition">
-                    <td className="p-3">{c.name}</td>
-                    <td className="p-3">{c.hex}</td>
-                    <td className="p-3">
-                      <div
-                        className="w-10 h-5 rounded border"
-                        style={{ background: c.hex }}
-                      ></div>
-                    </td>
-                    <td className="p-3 flex gap-3">
-                      <Link
-                        to={`/admin/gallery/edit/${c._id}`}
-                        className="text-blue-600 hover:underline"
-                      >
-                        Edit
-                      </Link>
-
-                      <button
-                        onClick={() => deleteColor(c._id)}
-                        className="text-red-600 hover:underline"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-
-      </div>
-    </AdminLayout>
-  );
+  const [items,setItems]=useState([]),[loading,setLoading]=useState(true),[error,setError]=useState("");
+  const fetchItems=useCallback(async()=>{setLoading(true);setError("");try{const response=await fetch(`${API_URL}/gallery`);const data=await response.json();if(!response.ok||!data.success)throw new Error(data.message||"Could not load the gallery.");setItems(data.colors||[]);}catch(err){setError(err.message);}finally{setLoading(false);}},[API_URL]);
+  useEffect(()=>{fetchItems();},[fetchItems]);
+  const remove=async item=>{if(!window.confirm(`Delete “${item.name}”?`))return;setError("");try{const response=await fetch(`${API_URL}/gallery/${item._id}`,{method:"DELETE",headers:{Authorization:`Bearer ${localStorage.getItem("adminToken")}`}});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.message||"Delete failed.");setItems(previous=>previous.filter(entry=>entry._id!==item._id));}catch(err){setError(err.message);}};
+  return <AdminLayout><div className="mx-auto max-w-7xl p-2 sm:p-6">
+    <header className="mb-7 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-end sm:justify-between sm:p-7"><div><p className="text-xs font-semibold uppercase tracking-[.2em] text-amber-700">PREMIUM LOOK TEXTURE</p><h1 className="mt-2 text-3xl font-semibold text-slate-900">Wall finishes & colours</h1><p className="mt-2 text-slate-600">Manage textures and paint colours shown in the website preview.</p></div><Link to="/admin/gallery/add" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-slate-900 px-5 font-semibold text-white hover:bg-slate-800">+ Add finish</Link></header>
+    {error&&<p role="alert" className="mb-4 rounded-xl bg-red-50 p-4 text-red-800">{error} <button onClick={fetchItems} className="ms-2 underline">Retry</button></p>}
+    {loading?<p className="rounded-xl bg-white p-8 text-center text-slate-600">Loading finishes…</p>:items.length===0?<div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-600">No textures or colours yet. Add your first wall finish.</div>:<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{items.map(item=>{const texture=item.type==='texture'||Boolean(item.image);return <article key={item._id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"><div className="relative aspect-[4/3] bg-slate-100">{texture&&item.image?<img src={item.image} alt={item.name} className="h-full w-full object-cover"/>:<div className="h-full w-full" style={{backgroundColor:item.hex||'#ddd'}}/>}<span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-bold uppercase tracking-wide text-slate-800">{texture?'Texture':'Colour'}</span></div><div className="p-4"><h2 className="text-lg font-semibold text-slate-900">{item.name}</h2>{!texture&&<p className="mt-1 font-mono text-sm text-slate-500">{item.hex}</p>}<div className="mt-4 flex gap-3">{!texture&&<Link to={`/admin/gallery/edit/${item._id}`} className="rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700">Edit colour</Link>}<button onClick={()=>remove(item)} className="rounded-lg border border-red-200 px-4 py-2 font-medium text-red-700 hover:bg-red-50">Remove</button></div></div></article>})}</div>}
+  </div></AdminLayout>;
 }

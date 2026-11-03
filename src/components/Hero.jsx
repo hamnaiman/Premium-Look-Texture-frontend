@@ -1,150 +1,20 @@
-// import { useEffect, useState } from "react";
-
-// export default function Hero() {
-//   const API_URL = import.meta.env.VITE_API_URL;
-//   const [hero, setHero] = useState(null);
-
-//   useEffect(() => {
-//     const loadHero = async () => {
-//       const res = await fetch(`${API_URL}/hero/all`);
-//       const data = await res.json();
-//       if (data.success && data.hero.length > 0) {
-//         setHero(data.hero[0]);
-//       }
-//     };
-//     loadHero();
-//   }, []);
-
-//   if (!hero) return null;
-
-//   return (
-//     <section className="relative w-full h-screen overflow-hidden">
-//       {/* Background Image */}
-//       <img
-//         src={`${API_URL.replace("/api", "")}/uploads/${hero.bgImage}`}
-//         alt="Hero Background"
-//         className="absolute inset-0 w-full h-full object-cover object-center"
-//       />
-
-//       {/* Overlay */}
-//       <div className="absolute inset-0 bg-black/20"></div>
-
-//       {/* Content Wrapper */}
-//       <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-20">
-//         <div className="w-full max-w-3xl">
-//           <div className="bg-gray-500/70 backdrop-blur-md rounded-xl px-4 sm:px-6 md:px-8 py-6 sm:py-8 text-center shadow-md">
-
-//             {/* Title */}
-//             <h1 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-//               {hero.title}
-//             </h1>
-
-//             {/* Description */}
-//             <p className="text-gray-100 text-sm sm:text-base md:text-lg max-w-2xl mx-auto mb-5">
-//               {hero.description}
-//             </p>
-
-//             {/* Buttons */}
-//             <div className="flex justify-center gap-3 flex-wrap">
-//               {hero.primaryBtnText && (
-//                 <a
-//                   href={hero.primaryBtnLink}
-//                   className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-md font-medium transition text-sm sm:text-base"
-//                 >
-//                   {hero.primaryBtnText}
-//                 </a>
-//               )}
-
-//               {hero.secondaryBtnText && (
-//                 <a
-//                   href={hero.secondaryBtnLink}
-//                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-md font-medium transition text-sm sm:text-base"
-//                 >
-//                   {hero.secondaryBtnText}
-//                 </a>
-//               )}
-//             </div>
-
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
-
 import { useEffect, useState } from "react";
 
-export default function Hero() {
-  const API_URL = import.meta.env.VITE_API_URL;
-  const [hero, setHero] = useState(null);
-
-  useEffect(() => {
-    const loadHero = async () => {
-      const res = await fetch(`${API_URL}/hero/all`);
-      const data = await res.json();
-      if (data.success && data.hero.length > 0) {
-        setHero(data.hero[0]);
-      }
-    };
-    loadHero();
-  }, [API_URL]);
-
-  if (!hero) return null;
-
-  return (
-    <section className="relative w-full h-screen overflow-hidden">
-      {/* Background Image */}
-      {hero.bgImage && (
-        <img
-          src={hero.bgImage} // <-- Cloudinary URL directly
-          alt="Hero Background"
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
-      )}
-
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/20"></div>
-
-      {/* Content Wrapper */}
-      <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-20">
-        <div className="w-full max-w-3xl">
-          <div className="bg-gray-500/70 backdrop-blur-md rounded-xl px-4 sm:px-6 md:px-8 py-6 sm:py-8 text-center shadow-md">
-
-            {/* Title */}
-            <h1 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-              {hero.title}
-            </h1>
-
-            {/* Description */}
-            <p className="text-gray-100 text-sm sm:text-base md:text-lg max-w-2xl mx-auto mb-5">
-              {hero.description}
-            </p>
-
-            {/* Buttons */}
-            <div className="flex justify-center gap-3 flex-wrap">
-              {hero.primaryBtnText && (
-                <a
-                  href={hero.primaryBtnLink}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-md font-medium transition text-sm sm:text-base"
-                >
-                  {hero.primaryBtnText}
-                </a>
-              )}
-
-              {hero.secondaryBtnText && (
-                <a
-                  href={hero.secondaryBtnLink}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-md font-medium transition text-sm sm:text-base"
-                >
-                  {hero.secondaryBtnText}
-                </a>
-              )}
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+export default function Hero(){
+ const API_URL=import.meta.env.VITE_API_URL||"/api";
+ const [hero,setHero]=useState(null);
+ useEffect(()=>{let active=true;fetch(`${API_URL}/hero/all`).then(response=>response.json()).then(data=>{if(active&&data.success&&data.hero?.length)setHero(data.hero[0]);}).catch(()=>{});return()=>{active=false};},[API_URL]);
+ if(!hero)return <section className="h-[85vh] min-h-[560px] bg-[#101b1a]" aria-label="Premium wall finishes"/>;
+ const origin=API_URL.replace(/\/api\/?$/,"");
+ return <section id="home" className="relative flex min-h-[680px] h-[100svh] max-h-[1000px] w-full items-center overflow-hidden bg-[#101b1a] pt-20 sm:pt-24">
+  <img src={`${origin}/uploads/${hero.bgImage}`} alt="Premium decorative wall texture" fetchPriority="high" className="absolute inset-0 h-full w-full object-cover object-center"/>
+  <div className="absolute inset-0 bg-gradient-to-r from-[#0c1716]/85 via-[#0c1716]/58 to-[#0c1716]/10"/><div className="absolute inset-0 bg-gradient-to-t from-[#101b1a]/50 via-transparent to-black/10"/>
+  <div className="relative z-10 mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 lg:px-10"><div className="max-w-3xl text-left">
+   <p className="mb-5 inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[.28em] text-[#e1c38c] sm:text-sm"><span className="h-px w-9 bg-[#c9a66a]"/>Premium wall finishes</p>
+   <h1 className="font-serif text-4xl font-medium leading-[1.12] text-white sm:text-6xl lg:text-7xl">{hero.title}</h1>
+   <p className="mt-6 max-w-2xl text-base leading-7 text-white/80 sm:text-lg sm:leading-8">{hero.description}</p>
+   <div className="mt-9 flex flex-wrap gap-3">{hero.primaryBtnText&&<a href={hero.primaryBtnLink||"#gallery"} className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#c9a66a] px-6 py-3 text-sm font-bold text-[#14201d] shadow-lg transition hover:bg-[#dfc18b] sm:px-7">{hero.primaryBtnText}</a>}{hero.secondaryBtnText&&<a href={hero.secondaryBtnLink||"#projects"} className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/50 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition hover:border-white hover:bg-white/15 sm:px-7">{hero.secondaryBtnText}</a>}</div>
+   <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-white/20 pt-5 text-xs font-medium uppercase tracking-[.16em] text-white/65 sm:text-sm"><span>Crafted textures</span><span>Skilled application</span><span>Made for your space</span></div>
+  </div></div>
+ </section>;
 }

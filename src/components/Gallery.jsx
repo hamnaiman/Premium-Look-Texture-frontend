@@ -1,167 +1,24 @@
-// import { useEffect, useState } from "react";
-
-// export default function Gallery() {
-//   const API_URL = import.meta.env.VITE_API_URL;
-//   const [colors, setColors] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   const fetchColors = async () => {
-//     try {
-//       const res = await fetch(`${API_URL}/gallery`);
-//       const data = await res.json();
-
-//       if (data.success && Array.isArray(data.colors)) {
-//         setColors(data.colors);
-//       } else {
-//         setColors([]);
-//       }
-//     } catch (err) {
-//       console.error("Fetch error:", err);
-//     }
-//     setLoading(false);
-//   };
-
-//   useEffect(() => {
-//     fetchColors();
-//   }, []);
-
-//   return (
-//     <section className="py-10 bg-gray-50">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-//         {/* Heading */}
-//         <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-gray-800 mb-8 sm:mb-12 leading-tight">
-//           <span className="text-black">Explore Our</span>{" "}
-//           <span className="text-yellow-500">Premium</span> <br />
-//           <span className="text-red-500">Color</span>{" "}
-        
-//           <span className="text-blue-500">Shades</span>
-//         </h2>
-
-//         {loading ? (
-//           <p className="text-center text-gray-600">Loading color gallery...</p>
-//         ) : colors.length === 0 ? (
-//           <p className="text-center text-gray-600">No colors found.</p>
-//         ) : (
-//           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8">
-
-//             {colors.map((c) => (
-//               <div
-//                 key={c._id}
-//                 className="group cursor-pointer transition-transform transform hover:-translate-y-2"
-//               >
-//                 <div
-//                   className="w-full h-24 sm:h-28 md:h-32 rounded-xl shadow-md border relative overflow-hidden"
-//                   style={{ backgroundColor: c.hex }}
-//                 >
-//                   <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-25 transition"></div>
-//                 </div>
-
-//                 <p className="mt-2 text-sm sm:text-base font-semibold text-gray-800 text-center">
-//                   {c.name}
-//                 </p>
-
-//                 <p className="text-xs sm:text-sm text-gray-500 text-center">{c.hex}</p>
-//               </div>
-//             ))}
-
-//           </div>
-//         )}
-//       </div>
-//     </section>
-//   );
-// }
-
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Gallery() {
-  const API_URL = import.meta.env.VITE_API_URL;
-
-  const [colors, setColors] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  /* ================= FETCH COLORS ================= */
-  const fetchColors = async () => {
-    try {
-      const res = await fetch(`${API_URL}/gallery`);
-      const data = await res.json();
-
-      if (data.success && Array.isArray(data.colors)) {
-        setColors(data.colors);
-      } else {
-        setColors([]);
-      }
-    } catch (err) {
-      console.error("Fetch error:", err);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchColors();
-  }, []);
-
-  /* ================= OPEN PREVIEW IN NEW TAB ================= */
-  const handleColorClick = (hex) => {
-    if (!hex) return;
-
-    // remove # for URL safety
-    const safeHex = hex.replace("#", "");
-    const url = `/room-preview?color=${safeHex}`;
-
-    // open in new browser tab
-    window.open(url, "_blank");
-  };
-
-  return (
-    <section className="py-10 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* ================= HEADING ================= */}
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-gray-800 mb-8 sm:mb-12 leading-tight">
-          <span className="text-black">Explore Our</span>{" "}
-          <span className="text-yellow-500">Premium</span> <br />
-          <span className="text-red-500">Color</span>{" "}
-          <span className="text-blue-500">Shades</span>
-        </h2>
-
-        {/* ================= STATES ================= */}
-        {loading ? (
-          <p className="text-center text-gray-600">
-            Loading color gallery...
-          </p>
-        ) : colors.length === 0 ? (
-          <p className="text-center text-gray-600">
-            No colors found.
-          </p>
-        ) : (
-          /* ================= COLOR GRID ================= */
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8">
-            {colors.map((c) => (
-              <div
-                key={c._id}
-                onClick={() => handleColorClick(c.hex)}
-                className="group cursor-pointer relative transition-transform transform hover:-translate-y-2"
-              >
-                <div
-                  className="w-full h-24 sm:h-28 md:h-32 rounded-xl shadow-md border relative overflow-hidden"
-                  style={{ backgroundColor: c.hex }}
-                >
-                  <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-25 transition"></div>
-                </div>
-
-                <p className="mt-2 text-sm sm:text-base font-semibold text-gray-800 text-center">
-                  {c.name}
-                </p>
-
-                <p className="text-xs sm:text-sm text-gray-500 text-center">
-                  {c.hex}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
-  );
+  const API_URL = import.meta.env.VITE_API_URL || "/api";
+  const [items,setItems]=useState([]),[loading,setLoading]=useState(true);
+  const navigate=useNavigate();
+  useEffect(()=>{let active=true;fetch(`${API_URL}/gallery`).then(response=>response.json()).then(data=>{if(active&&data.success)setItems(data.colors||[]);}).catch(()=>{}).finally(()=>{if(active)setLoading(false);});return()=>{active=false};},[API_URL]);
+  const textures=items.filter(item=>item.type==='texture'||Boolean(item.image));
+  const colors=items.filter(item=>!item.image&&item.type!=='texture');
+  const preview=(params)=>{const query=new URLSearchParams(params);navigate(`/room-preview?${query.toString()}`);};
+  return <section className="relative overflow-hidden bg-[#101b1a] py-20 text-[#f7f3eb] sm:py-28">
+    <div className="pointer-events-none absolute -right-40 top-0 h-96 w-96 rounded-full bg-amber-200/10 blur-3xl" />
+    <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <header className="mx-auto mb-12 max-w-3xl text-center sm:mb-16"><p className="text-xs font-semibold uppercase tracking-[.28em] text-[#d0ae77]">THE FINISH LIBRARY</p><h2 className="mt-4 font-serif text-4xl font-medium leading-tight sm:text-5xl">Textures that change<br className="hidden sm:block"/> the feeling of a room</h2><p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/65 sm:text-lg">Explore hand-selected wall finishes. Choose a texture to see it on a room wall.</p><div className="mx-auto mt-7 h-px w-20 bg-[#c9a66a]" /></header>
+      {loading?<p className="py-12 text-center text-white/65">Loading wall finishes…</p>:textures.length===0?<div className="rounded-2xl border border-white/15 bg-white/5 p-8 text-center text-white/70">New textures are being prepared. Please check back soon.</div>:<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{textures.map((item,index)=><motion.article key={item._id} initial={{opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.15}} transition={{duration:.4,delay:Math.min(index*.06,.24)}} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/[.045] shadow-[0_18px_60px_rgba(0,0,0,.24)]"><button type="button" onClick={()=>preview({texture:item.image,name:item.name})} className="relative block aspect-[4/3] w-full overflow-hidden text-left"><img src={item.image} alt={`${item.name} wall texture`} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"/><span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent"/><span className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3"><span><span className="block text-xs uppercase tracking-[.2em] text-[#e0c38f]">WALL FINISH</span><span className="mt-1 block font-serif text-2xl text-white">{item.name}</span></span><span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/50 bg-white/10 text-xl text-white backdrop-blur transition group-hover:bg-[#c9a66a]">↗</span></span></button><div className="flex items-center justify-between px-5 py-4"><p className="text-sm text-white/60">See this finish in a room</p><button type="button" onClick={()=>preview({texture:item.image,name:item.name})} className="text-sm font-semibold text-[#e0c38f] underline-offset-4 hover:underline">Preview on wall</button></div></motion.article>)}</div>}
+      <details className="mt-10 overflow-hidden rounded-2xl border border-white/15 bg-white/[.045] open:bg-white/[.07]">
+        <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:px-7"><span><span className="block font-serif text-xl sm:text-2xl">Looking for a paint colour?</span><span className="mt-1 block text-sm text-white/60">Open the colour library to browse solid shades.</span></span><span className="gallery-expand-icon grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/20 text-xl text-[#e0c38f] transition-transform">+</span></summary>
+        <div className="border-t border-white/10 px-5 py-6 sm:px-7">{colors.length?<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">{colors.map(color=><button type="button" key={color._id} onClick={()=>preview({color:(color.hex||'').replace('#',''),name:color.name})} className="group overflow-hidden rounded-xl border border-white/10 bg-black/20 text-left transition hover:-translate-y-0.5 hover:border-[#c9a66a]/70"><span className="block h-20 w-full sm:h-24" style={{backgroundColor:color.hex}}/><span className="block px-3 py-3"><span className="block truncate font-medium text-white">{color.name}</span><span className="mt-1 block font-mono text-xs uppercase text-white/45">{color.hex}</span></span></button>)}</div>:<p className="py-4 text-white/60">No paint colours have been added yet.</p>}</div>
+      </details>
+    </div>
+  </section>;
 }

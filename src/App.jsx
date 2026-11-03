@@ -13,6 +13,7 @@ import Services from "./components/Services";
 import Testimonials from "./components/Testimonials";
 import ContactForm from "./components/ContactForm";
 import Footer from "./components/Footer";
+import WhatsAppChat from "./components/WhatsAppChat";
 import Projects from "./components/Project";
 
 import Login from "./admin/Login";
@@ -75,6 +76,7 @@ export default function App() {
               <section id="contact"><ContactForm /></section>
 
               <Footer />
+              <WhatsAppChat />
             </>
           }
         />

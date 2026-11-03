@@ -1,3 +1,5 @@
+import Quotation from "./admin/Quotation/Quotation";
+import Ledger from "./admin/Ledger/Ledger";
 import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
@@ -78,6 +80,8 @@ export default function App() {
         />
 
         {/* Admin Routes */}
+        <Route path="/admin/quotation" element={<Quotation />} />
+        <Route path="/admin/ledger" element={<Ledger />} />
         <Route path="/admin/login" element={<Login />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
 

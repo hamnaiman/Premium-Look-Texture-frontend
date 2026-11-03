@@ -15,6 +15,8 @@ export default function Sidebar() {
   const location = useLocation();
 
   const menu = [
+    { name: "Quotation / کوٹیشن", path: "/admin/quotation", icon: BriefcaseIcon, color: "text-emerald-600" },
+    { name: "Labour / Site Khata", path: "/admin/ledger", icon: UserGroupIcon, color: "text-emerald-600" },
     { name: "Dashboard", path: "/admin/dashboard", icon: HomeIcon, color: "text-blue-500" },
     { name: "Hero Section", path: "/admin/hero", icon: SparklesIcon, color: "text-purple-500" },
 
@@ -36,7 +38,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 h-screen p-5 fixed">
+    <aside className="w-64 bg-white border-r border-gray-200 h-screen p-5 fixed overflow-y-auto">
       {/* Logo */}
       <h2 className="text-2xl font-extrabold text-gray-900 mb-8 tracking-tight">
         Admin Panel

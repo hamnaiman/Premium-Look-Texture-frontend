@@ -12,6 +12,7 @@ function SparkleIcon() {
 export default function Hero() {
   const API_URL = import.meta.env.VITE_API_URL;
   const [hero, setHero] = useState(null);
+  const [heroImageFailed, setHeroImageFailed] = useState(false);
   const [textures, setTextures] = useState([]);
   const [selectedId, setSelectedId] = useState("");
   const [customerPhoto, setCustomerPhoto] = useState(null);
@@ -95,9 +96,9 @@ export default function Hero() {
     setCustomerPhoto({ file, url: URL.createObjectURL(file) });
   };
 
-  return <section className="relative isolate min-h-[calc(100svh-5rem)] overflow-hidden bg-[#17201d] pb-10 pt-28 sm:pb-12 sm:pt-32 lg:pt-36">
-    <img src={imageSrc} alt="Premium wall finish" className="absolute inset-0 -z-20 h-full w-full object-cover object-center" />
-    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#101512]/80 via-[#101512]/58 to-[#101512]/28" />
+  return <section className="relative isolate min-h-[calc(100svh-5rem)] overflow-hidden bg-[#17201d] pb-8 pt-24 sm:pb-12 sm:pt-32 lg:pt-36">
+    <img src={heroImageFailed ? wallImage : imageSrc} onError={() => setHeroImageFailed(true)} alt="Premium wall finish" className="absolute inset-0 -z-20 h-full w-full object-cover object-[58%_center] lg:object-center" />
+    <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(16,21,18,.38)_0%,rgba(16,21,18,.16)_44%,rgba(16,21,18,.48)_100%)] lg:bg-gradient-to-r lg:from-[#101512]/80 lg:via-[#101512]/58 lg:to-[#101512]/28" />
     <div className="mx-auto grid min-h-[calc(100svh-14rem)] w-full max-w-[1440px] items-center gap-8 px-5 sm:px-8 lg:grid-cols-[1fr_.82fr] lg:gap-12 lg:px-12 xl:gap-16 xl:px-16">
       <div className="w-full max-w-[760px] text-center text-white lg:text-left">
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-2 text-xs font-semibold tracking-wide text-white/90 shadow-sm backdrop-blur sm:text-sm"><SparkleIcon /> Texture, made personal</div>
